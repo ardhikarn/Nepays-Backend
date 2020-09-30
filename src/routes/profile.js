@@ -1,6 +1,7 @@
 const router = require("express").Router()
-const { get_profile_navbar } = require('../controller/profile/profile_navbar')
+const { get_profile, get_personal } = require('../controller/profile/profile')
 
-router.post("/navbar", get_profile_navbar);
+router.post("/profile", get_profile);
+router.post("/personal", get_personal);
 
 module.exports = router
