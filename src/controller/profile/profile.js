@@ -1,6 +1,5 @@
 const { getUserById, getUserFullById, patchPersonal, getPhone, getImage, patchProfileImage } = require("../../model/profile")
 const helper = require("../../helper/index")
-// const me = require("../../../uploads/")
 const fs = require('fs')
 const { request } = require("express")
 
