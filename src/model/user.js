@@ -21,5 +21,19 @@ module.exports = {
         !error ? resolve(result) : reject(new Error(error))
       })
     })
+  },
+  patchUserByEmail: (setData, email) => {
+    return new Promise((resolve, reject) => {
+      connection.query('UPDATE users SET ? WHERE email = ?', [setData, email], (error, result) => {
+        !error ? resolve(result) : reject(new Error(error))
+      })
+    })
+  },
+  getUserByKey: (key) => {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * FROM users where reset_key = ?', key, (error, result) => {
+        !error ? resolve(result) : reject(new Error(error))
+      })
+    })
   }
 }
