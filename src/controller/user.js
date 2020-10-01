@@ -18,8 +18,9 @@ module.exports = {
       pin_code: '',
       password: encryptPassword,
       image: 'blank-user.png',
-      ver_email: 1,
+      balance: 0,
       status: 1,
+      reset_key: '',
       created: new Date()
     }
     try {
@@ -72,10 +73,10 @@ module.exports = {
               email: checkUser[0].email,
               phone: checkUser[0].phone,
               image: checkUser[0].image,
-              ver_email: checkUser[0].ver_email,
+              balance: checkUser[0].balance,
               status: checkUser[0].status
             }
-            if (payload.ver_email === 0 || payload.status === 0) {
+            if (payload.status === 0) {
               return helper.response(response, 400, 'Account is not activated, please check your email')
             } else {
               const token = jwt.sign(payload, process.env.KEY, { expiresIn: '24h' })
