@@ -1,7 +1,7 @@
 {
-  "name": "Backend",
+  "name": "backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "<h1 align=\"center\">ExpressJS - Nepays RESTfull API</h1>",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -24,5 +24,13 @@
     "nodemon": "^2.0.4",
     "qs": "^6.9.4",
     "redis": "^3.0.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bagasafrz7/Nepays-Backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bagasafrz7/Nepays-Backend/issues"
+  },
+  "homepage": "https://github.com/bagasafrz7/Nepays-Backend#readme"
 }
