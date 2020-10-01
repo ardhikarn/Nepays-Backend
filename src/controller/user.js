@@ -17,8 +17,9 @@ module.exports = {
       pin_code: '',
       password: encryptPassword,
       image: 'blank-user.png',
-      ver_email: 1,
+      balance: 0,
       status: 1,
+      reset_key: '',
       created: new Date()
     }
     try {
