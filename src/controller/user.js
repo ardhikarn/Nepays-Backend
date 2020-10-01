@@ -19,7 +19,7 @@ module.exports = {
       image: 'blank-user.png',
       balance: 0,
       status: 1,
-      reset_key: '',
+      reset_key: 0,
       created: new Date()
     }
     try {
