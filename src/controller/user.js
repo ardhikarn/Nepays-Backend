@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
 const helper = require('../helper')
 const { getUserByEmail, getUserByPhone, postUser } = require('../model/user')
 
@@ -43,6 +44,46 @@ module.exports = {
       } else {
         await postUser(setData)
         return helper.response(response, 200, 'Registration Successful')
+      }
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request')
+    }
+  },
+  loginUser: async (request, response) => {
+    const { email, password } = request.body
+    try {
+      if (email === undefined || email === '') {
+        return helper.response(response, 400, 'Please enter your email')
+      } else if (password === undefined || password === '') {
+        return helper.response(response, 400, 'Please enter your password')
+      } else {
+        const checkUser = await getUserByEmail(email)
+        if (checkUser.length < 1) {
+          return helper.response(response, 400, 'Email is not registered')
+        } else {
+          const checkPassword = bcrypt.compareSync(password, checkUser[0].password)
+          if (!checkPassword) {
+            return helper.response(response, 400, 'Wrong password')
+          } else {
+            let payload = {
+              id: checkUser[0].id,
+              first_name: checkUser[0].first_name,
+              last_name: checkUser[0].last_name,
+              email: checkUser[0].email,
+              phone: checkUser[0].phone,
+              image: checkUser[0].image,
+              ver_email: checkUser[0].ver_email,
+              status: checkUser[0].status
+            }
+            if (payload.ver_email === 0 || payload.status === 0) {
+              return helper.response(response, 400, 'Account is not activated, please check your email')
+            } else {
+              const token = jwt.sign(payload, process.env.KEY, { expiresIn: '24h' })
+              payload = { ...payload, token }
+              return helper.response(response, 200, 'Login Success', payload)
+            }
+          }
+        }
       }
     } catch (error) {
       return helper.response(response, 400, 'Bad Request')
