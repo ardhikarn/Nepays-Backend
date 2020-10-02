@@ -57,36 +57,8 @@ module.exports = {
       } else {
         return helper.response(response, 400, "Wrong Pin !");
       }
-      // const setData = { pin_code: pin_encrypt }
-      // if (pin.length < 6) {
-      //   return helper.response(response, 400, "Pin must be up to 6 number");
-      // } else if (pin.length >= 6) {
-      //   return helper.response(response, 400, "Max Pin 6 number");
-      // } else {
-      //   const check_pin = bcrypt.compareSync(pin, LastPin[0].pin)
-      //   console.log(check_pin)
-      //   // const new_pin = await patchNewPin(setData, id)
-      //   return helper.response(response, 200, "Create new pin success");
-      // }
-
-      // const check_password = bcrypt.compareSync(password, check_data_user[0].password)
-      // if (check_password) {
-      //   const { id, email, name, role_id, status } = check_data_user[0]
-      //   let payload = {
-      //     id,
-      //     email,
-      //     name,
-      //     role_id,
-      //     status
-      //   }
-      //   const token = jwt.sign(payload, "RAHASIA", { expiresIn: "300h" })
-      //   payload = { ...payload, token }
-      //   return helper.response(response, 200, "Login Success", payload)
-      // } else {
-      //   return helper.response(response, 400, "Wrong Password !")
-      // }
     } catch (error) {
-
+      return helper.response(response, 400, "Bad Request");
     }
   }
 
