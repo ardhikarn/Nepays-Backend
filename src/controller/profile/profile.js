@@ -67,7 +67,6 @@ module.exports = {
       return helper.response(response, 400, "Bad request", error);
     }
   },
-
   patch_profile_image: async (request, response) => {
     try {
       let { id_user_login, image } = request.body
