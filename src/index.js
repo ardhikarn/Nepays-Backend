@@ -1,6 +1,6 @@
 const route = require('express').Router()
-const user = require('./routes/user')
 
+const user = require('./routes/user')
 const profile = require('./routes/profile')
 const pin = require('./routes/pin')
 const password = require('./routes/password')
