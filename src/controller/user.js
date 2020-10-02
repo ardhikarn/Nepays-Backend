@@ -1,7 +1,8 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const helper = require('../helper')
-const { getUserByEmail, getUserByPhone, postUser } = require('../model/user')
+const nodemailer = require('nodemailer')
+const { getUserByEmail, getUserByPhone, postUser, patchUserByEmail, getUserByKey } = require('../model/user')
 
 module.exports = {
   registerUser: async (request, response) => {
@@ -47,7 +48,7 @@ module.exports = {
         return helper.response(response, 200, 'Registration Successful')
       }
     } catch (error) {
-      return helper.response(response, 400, 'Bad Request')
+      return helper.response(response, 400, 'Bad Request', error)
     }
   },
   loginUser: async (request, response) => {
@@ -88,7 +89,95 @@ module.exports = {
         }
       }
     } catch (error) {
-      return helper.response(response, 400, 'Bad Request')
+      return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  forgotPassword: async (request, response) => {
+    const { email } = request.body
+    const key = Math.round(Math.random() * 100000)
+    try {
+      if (email === undefined || email === '') {
+        return helper.response(response, 400, 'Please enter your email')
+      } else {
+        const checkUser = await getUserByEmail(email)
+        if (checkUser.length < 1) {
+          return helper.response(response, 400, 'Email is not registered !')
+        } else {
+          const setData = {
+            reset_key: key,
+            updated: new Date()
+          }
+          await patchUserByEmail(setData, email)
+          const transporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
+            auth: {
+              user: process.env.USER,
+              pass: process.env.PASS
+            }
+          })
+          const newLocal = (await transporter.sendMail({
+            from: '"Nepays ID"',
+            to: email,
+            subject: 'Nepays ID - Forgot Password',
+            html: `Click <a href="${process.env.URL}/reset-password?key=${key}">here</a> to reset your password.`
+          }),
+          function (error) {
+            if (error) {
+              return helper.response(response, 400, 'Failed to send email')
+            }
+          })
+          return helper.response(response, 200, 'Email sent. Please check your inbox', newLocal)
+        }
+      }
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  resetPassword: async (request, response) => {
+    const { key, newPassword, confirmPassword } = request.body
+    try {
+      if (key === undefined || key === '') {
+        return helper.response(response, 400, 'Please enter your key')
+      } else if (newPassword === undefined || newPassword === '') {
+        return helper.response(response, 400, 'Please enter a new password')
+      } else if (confirmPassword === undefined || confirmPassword === '') {
+        return helper.response(response, 400, 'Please confirm your new password')
+      } else if (newPassword.length < 8 || newPassword.length > 16) {
+        return helper.response(response, 400, 'Password must be 8-16 characters long')
+      } else if (newPassword !== confirmPassword) {
+        return helper.response(response, 400, "Password didn't match")
+      } else {
+        const checkKey = await getUserByKey(key)
+        if (checkKey.length < 1) {
+          return helper.response(response, 400, 'Invalid key')
+        } else {
+          const email = checkKey[0].email
+          const difference = new Date() - checkKey[0].updated
+          const minutesDifference = Math.floor(difference / 1000 / 60)
+          if (minutesDifference > 5) {
+            const setData = {
+              reset_key: 0,
+              updated: new Date()
+            }
+            await patchUserByEmail(setData, email)
+            return helper.response(response, 400, 'Key has expired. Please enter your email again')
+          } else {
+            const salt = bcrypt.genSaltSync(9)
+            const encryptPassword = bcrypt.hashSync(newPassword, salt)
+            const setData = {
+              password: encryptPassword,
+              reset_key: 0,
+              updated: new Date()
+            }
+            await patchUserByEmail(setData, email)
+            return helper.response(response, 200, 'Password reset successfully')
+          }
+        }
+      }
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request', error)
     }
   }
 }
