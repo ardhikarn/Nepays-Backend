@@ -72,6 +72,7 @@ module.exports = {
               last_name: checkUser[0].last_name,
               email: checkUser[0].email,
               phone: checkUser[0].phone,
+              pin_code: checkUser[0].pin_code,
               image: checkUser[0].image,
               balance: checkUser[0].balance,
               status: checkUser[0].status
