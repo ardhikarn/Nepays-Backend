@@ -35,5 +35,12 @@ module.exports = {
         !error ? resolve(result[0].total) : reject(new Error(error))
       })
     })
+  },
+  postTransaction: (setData) => {
+    return new Promise((resolve, reject) => {
+      connection.query('INSERT INTO transaction SET ?', setData, (error, result) => {
+        !error ? resolve(result) : reject(new Error(error))
+      })
+    })
   }
 }
