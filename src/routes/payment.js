@@ -1,7 +1,7 @@
 const router = require('express').Router()
-const { postPayment } = require('../controller/payment')
+const { postPayment, post_topup } = require('../controller/payment')
 
-router.post('/', postPayment)
+router.post('/', post_topup)
 // router.post('/midtrans-notification', )
 
 module.exports = router
