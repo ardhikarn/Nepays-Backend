@@ -31,8 +31,15 @@ module.exports = {
   },
   getUserByKey: (key) => {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM users where reset_key = ?', key, (error, result) => {
+      connection.query('SELECT * FROM users WHERE reset_key = ?', key, (error, result) => {
         !error ? resolve(result) : reject(new Error(error))
+      })
+    })
+  },
+  getUserById: (id) => {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT * from users WHERE id = ?', id, (error, result) => {
+        !error ? resolve(result[0]) : reject(new Error(error))
       })
     })
   }
