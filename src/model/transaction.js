@@ -42,5 +42,19 @@ module.exports = {
         !error ? resolve(result) : reject(new Error(error))
       })
     })
+  },
+  getSum: (id, category) => {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT SUM(amount) AS total FROM transaction WHERE user_id = ? AND category = ? AND WEEK(NOW()) = WEEK(created)', [id, category], (error, result) => {
+        !error ? resolve(result[0].total) : reject(new Error(error))
+      })
+    })
+  },
+  getDailySum: (id, category) => {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT SUM(amount) AS total, DATE(created) AS date FROM transaction WHERE user_id = ? AND category = ? AND WEEK(NOW()) = WEEK(created) GROUP BY DATE(created)', [id, category], (error, result) => {
+        !error ? resolve(result) : reject(new Error(error))
+      })
+    })
   }
 }
