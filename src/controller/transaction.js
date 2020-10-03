@@ -1,7 +1,7 @@
 const helper = require('../helper')
 const qs = require('querystring')
 const bcrypt = require('bcrypt')
-const { getRecentTransactionById, getTransactionHistory, getCountTransactionHistory, getCountSearchHistory, getSearchTransactionHistory, postTransaction } = require('../model/transaction')
+const { getRecentTransactionById, getTransactionHistory, getCountTransactionHistory, getCountSearchHistory, getSearchTransactionHistory, postTransaction, getSum, getDailySum } = require('../model/transaction')
 const { getUserById, patchUserByEmail } = require('../model/user')
 
 const getPrevLink = (page, currentQuery) => {
@@ -150,6 +150,26 @@ module.exports = {
           return helper.response(response, 200, 'Transfer Success', result)
         }
       }
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  chart: async (request, response) => {
+    const { id } = request.params
+    try {
+      const income = await getSum(id, 2)
+      const expense = await getSum(id, 1)
+      const dailyIncome = await getDailySum(id, 2)
+      const dailyExpense = await getDailySum(id, 1)
+      const result = {
+        income,
+        expense,
+        chartData: {
+          dailyIncome,
+          dailyExpense
+        }
+      }
+      return helper.response(response, 200, 'Get chart data success', result)
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)
     }
