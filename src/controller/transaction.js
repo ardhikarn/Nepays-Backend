@@ -1,6 +1,8 @@
 const helper = require('../helper')
 const qs = require('querystring')
-const { getRecentTransactionById, getTransactionHistory, getCountTransactionHistory, getCountSearchHistory, getSearchTransactionHistory } = require('../model/transaction')
+const bcrypt = require('bcrypt')
+const { getRecentTransactionById, getTransactionHistory, getCountTransactionHistory, getCountSearchHistory, getSearchTransactionHistory, postTransaction } = require('../model/transaction')
+const { getUserById, patchUserByEmail } = require('../model/user')
 
 const getPrevLink = (page, currentQuery) => {
   if (page > 1) {
@@ -88,6 +90,66 @@ module.exports = {
       }
       const result = await getSearchTransactionHistory(id, keyword, offset)
       return helper.response(response, 200, 'Search transaction history successfully', result, pageInfo)
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  transfer: async (request, response) => {
+    const { userId, targetId, amount, note, pin } = request.body
+    try {
+      const checkUser = await getUserById(userId)
+      const deduction = checkUser.balance - amount
+      if (deduction < 0) {
+        return helper.response(response, 400, 'Insufficient balance')
+      } else {
+        const checkPin = bcrypt.compareSync(pin, checkUser.pin_code)
+        if (!checkPin) {
+          return helper.response(response, 400, 'Your pin is incorrect')
+        } else {
+          const setDataUser = {
+            balance: deduction,
+            updated: new Date()
+          }
+          await patchUserByEmail(setDataUser, checkUser.email)
+          const checkTarget = await getUserById(targetId)
+          const addition = parseInt(checkTarget.balance) + parseInt(amount)
+          const setDataTarget = {
+            balance: addition,
+            updated: new Date()
+          }
+          await patchUserByEmail(setDataTarget, checkTarget.email)
+          const setDataSend = {
+            user_id: userId,
+            target_id: targetId,
+            amount,
+            category: 1,
+            note,
+            created: new Date()
+          }
+          await postTransaction(setDataSend)
+          const setDataReceive = {
+            user_id: targetId,
+            target_id: userId,
+            amount,
+            category: 2,
+            note,
+            created: new Date()
+          }
+          await postTransaction(setDataReceive)
+          const result = {
+            amount,
+            balanceLeft: deduction,
+            date: new Date(),
+            note,
+            transferTo: {
+              image: checkTarget.image,
+              name: checkTarget.first_name.concat(' ', checkTarget.last_name),
+              phone: checkTarget.phone
+            }
+          }
+          return helper.response(response, 200, 'Transfer Success', result)
+        }
+      }
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)
     }
