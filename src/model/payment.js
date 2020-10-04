@@ -9,6 +9,13 @@ module.exports = {
       })
     })
   },
+  getTopupHistory: (id) => {
+    return new Promise((resolve, reject) => {
+      connection.query(`SELECT * FROM topup_history WHERE id_user = ?`, id, (error, result) => {
+        !error ? resolve(result) : reject(new Error(error))
+      })
+    })
+  },
   patchTopup: (id, set_data) => {
     return new Promise((resolve, reject) => {
       connection.query('UPDATE users SET ? WHERE id = ?', [set_data, id], (error, result) => {

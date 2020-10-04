@@ -1,5 +1,5 @@
 const helper = require('../helper/index')
-const { getBalanceUser, postTopup, patchTopup } = require('../model/payment')
+const { getBalanceUser, postTopup, patchTopup, getTopupHistory } = require('../model/payment')
 const { postNotification } = require('../model/notification')
 
 module.exports = {
@@ -38,6 +38,15 @@ module.exports = {
       return helper.response(response, 200, 'Success Topup')
     } catch (error) {
       console.log(error)
+    }
+  },
+  get_topup_history: async (request, response) => {
+    const id_user_login = request.params.id
+    try {
+      const data = await getTopupHistory(id_user_login)
+      return helper.response(response, 200, 'Get History success', data)
+    } catch (error) {
+
     }
   }
 }
