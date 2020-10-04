@@ -20,14 +20,16 @@ module.exports = {
   // },
   post_topup: async (request, response) => {
     try {
-      const { id_user_login, nominal } = request.body
-      const saldo_user = await getBalanceUser(id_user_login)
-      const set_data = { id_user: id_user_login, nominal: nominal, date: new Date() }
+      const { id } = request.params
+      const { nominal } = request.body
+      // const { id_user_login, nominal } = request.body
+      const saldo_user = await getBalanceUser(id)
+      const set_data = { id_user: id, nominal: nominal, date: new Date() }
       const set_data_2 = { balance: parseInt(saldo_user[0].balance) + parseInt(nominal) }
       const post_history = await postTopup(set_data)
-      const patch_user = await patchTopup(id_user_login, set_data_2)
+      const patch_user = await patchTopup(id, set_data_2)
       const setDataNotification = {
-        user_id: id_user_login,
+        user_id: id,
         message: 'Top up',
         amount: nominal,
         category: 2,
