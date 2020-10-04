@@ -24,9 +24,9 @@ const getNextLink = (page, totalPage, currentQuery) => {
 module.exports = {
 
   get_user: async (request, response) => {
-    let { page } = request.query
-    const search = request.body.search
-    const id_user_login = request.body.id_user_login
+    let { page, search, id_user_login } = request.query
+    // const search = request.body.search
+    // const id_user_login = request.body.id_user_login
     page = parseInt(page)
     let limit = 4
     let totalData = await getUsersCount()
