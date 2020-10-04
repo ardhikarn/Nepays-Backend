@@ -1,4 +1,4 @@
-const { getUsersSearch, getUsersCount } = require('../../model/transfer')
+const { getUsersSearch, getUsersCount, getUsersId } = require('../../model/transfer')
 const helper = require('../../helper/index')
 const qs = require('querystring')
 
@@ -45,6 +45,15 @@ module.exports = {
     try {
       const data = await getUsersSearch(id_user_login, search, limit, offset)
       return helper.response(response, 200, 'Get users success', data, pageInfo)
+    } catch (error) {
+      return helper.response(response, 400, 'Bad request', error)
+    }
+  },
+  get_user_id: async (request, response) => {
+    let id = request.params.id
+    try {
+      const data = await getUsersId(id)
+      return helper.response(response, 200, 'Get users success', data)
     } catch (error) {
       return helper.response(response, 400, 'Bad request', error)
     }

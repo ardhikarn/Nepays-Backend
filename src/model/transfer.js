@@ -15,6 +15,13 @@ module.exports = {
         !error ? resolve(result) : reject(new Error(error))
       })
     })
+  },
+  getUsersId: (id) => {
+    return new Promise((resolve, reject) => {
+      connection.query(`SELECT * FROM users WHERE id = ?`, id, (error, result) => {
+        !error ? resolve(result) : reject(new Error(error))
+      })
+    })
   }
 
 }
