@@ -36,7 +36,7 @@ module.exports = {
   },
   getTopupHistoryCount: (id) => {
     return new Promise((resolve, reject) => {
-      connection.query('SELECT count(*) AS totals FROM topup_history WHERE id_user = ? AND status = 1', id, (error, result) => {
+      connection.query('SELECT count(*) AS totals FROM topup_history WHERE id_user = ?', id, (error, result) => {
         !error ? resolve(result) : reject(new Error(error))
       })
     })
