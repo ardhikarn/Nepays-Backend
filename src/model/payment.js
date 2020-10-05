@@ -17,7 +17,6 @@ module.exports = {
     })
   },
   patchTopup: (id, set_data) => {
-    console.log(set_data)
     return new Promise((resolve, reject) => {
       connection.query('UPDATE users SET ? WHERE id = ?', [set_data, id], (error, result) => {
         !error ? resolve(result) : reject(new Error(error))
