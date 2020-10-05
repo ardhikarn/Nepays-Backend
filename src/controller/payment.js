@@ -49,7 +49,7 @@ module.exports = {
       clientKey: 'SB-Mid-client-rpv3D01z-aeSbOOl'
     })
 
-    snap.transaction.notification(notificationJson).then(async (statusResponse) => {
+    snap.transaction.notification(request.body).then(async (statusResponse) => {
       const orderId = statusResponse.order_id
       const transactionStatus = statusResponse.transaction_status
       const fraudStatus = statusResponse.fraud_status
@@ -58,15 +58,15 @@ module.exports = {
         `Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}`
       )
 
-      if (transactionStatus == 'capture') {
-        if (fraudStatus == 'challenge') {
+      if (transactionStatus === 'capture') {
+        if (fraudStatus === 'challenge') {
           // TODO set transaction status on your databaase to 'challenge'
           console.log('challenge')
-        } else if (fraudStatus == 'accept') {
+        } else if (fraudStatus === 'accept') {
           // TODO set transaction status on your databaase to 'success'
           console.log('success')
         }
-      } else if (transactionStatus == 'settlement') {
+      } else if (transactionStatus === 'settlement') {
         const checkTopup = await getTopupById(orderId)
         const setDataStatus = {
           status: 1
@@ -80,23 +80,27 @@ module.exports = {
         }
         await patchTopup(checkTopup.id_user, setDataBalance)
         return helper.response(response, 200, 'Topup Success')
-      } else if (transactionStatus == 'deny') {
+      } else if (transactionStatus === 'deny') {
         // TODO you can ignore 'deny', because most of the time it allows payment retries
         // and later can become success
         console.log('deny')
       } else if (
-        transactionStatus == 'cancel' ||
-        transactionStatus == 'expire'
+        transactionStatus === 'cancel' ||
+        transactionStatus === 'expire'
       ) {
         // TODO set transaction status on your databaase to 'failure'
         console.log('failure')
-      } else if (transactionStatus == 'pending') {
+      } else if (transactionStatus === 'pending') {
         // TODO set transaction status on your databaase to 'pending' / waiting payment
         console.log('pending')
       }
-    }).catch((error) => {
-      console.log(error)
+    }).then(() => {
+      return helper.response(response, 200, 'OK')
     })
+      .catch((error) => {
+        return helper.response(response, 200, error)
+      })
+
   },
   test: async (request, response) => {
     try {

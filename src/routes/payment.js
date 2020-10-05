@@ -5,7 +5,7 @@ router.post('/', post_topup)
 router.get('/', get_topup_history)
 
 router.post('/midtrans/:id', createPayment)
-router.post('/midtrans/notification', midtransNotification)
+router.post('/midtrans-notification', midtransNotification)
 router.post('/midtrans/test/:id', test)
 
 module.exports = router

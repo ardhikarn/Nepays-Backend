@@ -19,8 +19,6 @@ module.exports = {
   patchTopup: (id, set_data) => {
     return new Promise((resolve, reject) => {
       connection.query('UPDATE users SET ? WHERE id = ?', [set_data, id], (error, result) => {
-        console.log(error)
-        console.log(result)
         !error ? resolve(result) : reject(new Error(error))
       })
     })
@@ -28,8 +26,6 @@ module.exports = {
   getBalanceUser: (id) => {
     return new Promise((resolve, reject) => {
       connection.query('SELECT balance FROM users WHERE id = ?', id, (error, result) => {
-        console.log(error)
-        console.log(result)
         !error ? resolve(result) : reject(new Error(error))
       })
     })
@@ -72,8 +68,6 @@ module.exports = {
   getTopupById: (id) => {
     return new Promise((resolve, reject) => {
       connection.query('SELECT * FROM topup_history WHERE id = ?', id, (error, result) => {
-        console.log(error)
-        console.log(result)
         !error ? resolve(result[0]) : reject(new Error(error))
       })
     })
@@ -81,8 +75,6 @@ module.exports = {
   patchTopupHistory: (id, setData) => {
     return new Promise((resolve, reject) => {
       connection.query('UPDATE topup_history SET ? WHERE id = ?', [setData, id], (error, result) => {
-        console.log(error)
-        console.log(result)
         !error ? resolve(result) : reject(new Error(error))
       })
     })
