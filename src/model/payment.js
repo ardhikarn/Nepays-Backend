@@ -9,9 +9,9 @@ module.exports = {
       })
     })
   },
-  getTopupHistory: (id) => {
+  getTopupHistory: (id, limit, offset) => {
     return new Promise((resolve, reject) => {
-      connection.query(`SELECT * FROM topup_history WHERE id_user = ?`, id, (error, result) => {
+      connection.query(`SELECT * FROM topup_history WHERE id_user = ? LIMIT ? OFFSET ?`, [id, limit, offset], (error, result) => {
         !error ? resolve(result) : reject(new Error(error))
       })
     })
@@ -26,6 +26,13 @@ module.exports = {
   getBalanceUser: (id) => {
     return new Promise((resolve, reject) => {
       connection.query('SELECT balance FROM users WHERE id = ?', id, (error, result) => {
+        !error ? resolve(result) : reject(new Error(error))
+      })
+    })
+  },
+  getTopupHistoryCount: (id) => {
+    return new Promise((resolve, reject) => {
+      connection.query('SELECT count(*) AS totals FROM topup_history WHERE id_user = ?', id, (error, result) => {
         !error ? resolve(result) : reject(new Error(error))
       })
     })

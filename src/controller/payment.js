@@ -1,6 +1,27 @@
 const helper = require('../helper/index')
-const { getBalanceUser, postTopup, patchTopup, getTopupHistory } = require('../model/payment')
+const { getBalanceUser, postTopup, patchTopup, getTopupHistory, getTopupHistoryCount } = require('../model/payment')
 const { postNotification } = require('../model/notification')
+// const connection = require('../config/mysql')
+const qs = require('querystring')
+
+const getPrevLink = (page, currentQuery) => {
+  if (page > 1) {
+    const generatedPage = { page: page - 1 }
+    const resultPrevLink = { ...currentQuery, ...generatedPage }
+    return qs.stringify(resultPrevLink)
+  } else {
+    return null
+  }
+}
+const getNextLink = (page, totalPage, currentQuery) => {
+  if (page < totalPage) {
+    const generatedPage = { page: page + 1 }
+    const resultNextLink = { ...currentQuery, ...generatedPage }
+    return qs.stringify(resultNextLink)
+  } else {
+    return null
+  }
+}
 
 module.exports = {
   // postPayment: async (request, response) => {
@@ -39,16 +60,31 @@ module.exports = {
       await postNotification(setDataNotification)
       return helper.response(response, 200, 'Success Topup')
     } catch (error) {
-      console.log(error)
+      return helper.response(response, 400, 'Bad Request')
     }
   },
   get_topup_history: async (request, response) => {
-    const id_user_login = request.params.id
+    let { page, id_user_login } = request.query
+    page = parseInt(page)
+    let limit = 4
+    let totalData = await getTopupHistoryCount(id_user_login)
+    let totalPage = Math.ceil(totalData[0].totals / limit)
+    let offset = page * limit - limit
+    let prevLink = getPrevLink(page, request.query)
+    let nextLink = getNextLink(page, totalPage, request.query)
+    const pageInfo = {
+      page,
+      totalPage,
+      limit,
+      totalData,
+      prevLink: prevLink && `${process.env.ip}:${process.env.port}/payment?${prevLink}`,
+      nextLink: nextLink && `${process.env.ip}:${process.env.port}/payment?${nextLink}`
+    }
     try {
-      const data = await getTopupHistory(id_user_login)
-      return helper.response(response, 200, 'Get History success', data)
+      const data = await getTopupHistory(id_user_login, limit, offset)
+      return helper.response(response, 200, 'Get History success', data, pageInfo)
     } catch (error) {
-
+      return helper.response(response, 400, 'Bad Request')
     }
   }
 }
