@@ -50,7 +50,7 @@ module.exports = {
       clientKey: 'SB-Mid-client-rpv3D01z-aeSbOOl'
     })
 
-    snap.transaction.notification(request.body).then(async (statusResponse) => {
+    snap.transaction.notification(notificationJson).then(async (statusResponse) => {
       const orderId = statusResponse.order_id
       const transactionStatus = statusResponse.transaction_status
       const fraudStatus = statusResponse.fraud_status
