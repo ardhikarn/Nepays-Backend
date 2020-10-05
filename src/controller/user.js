@@ -121,7 +121,7 @@ module.exports = {
             from: '"Nepays ID"',
             to: email,
             subject: 'Nepays ID - Forgot Password',
-            html: `Click <a href="https://nepays.netlify.app/reset-password?key=${key}">here</a> to reset your password.`
+            html: `Click <a href="${process.env.URL}/reset-password?key=${key}">here</a> to reset your password.`
           }),
           function (error) {
             if (error) {
@@ -132,7 +132,6 @@ module.exports = {
         }
       }
     } catch (error) {
-      console.log(error)
       return helper.response(response, 400, 'Bad Request', error)
     }
   },
