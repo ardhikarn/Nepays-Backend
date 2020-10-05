@@ -77,6 +77,7 @@ module.exports = {
           balance: addition,
           updated: new Date()
         }
+        console.log(setDataBalance)
         patchTopup(checkTopup[0].id_user, setDataBalance)
       } else if (transactionStatus === 'deny') {
         // TODO you can ignore 'deny', because most of the time it allows payment retries
