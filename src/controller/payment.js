@@ -72,6 +72,7 @@ module.exports = {
         patchTopupHistory(orderId, setDataStatus)
         const balance = getBalanceUser(checkTopup[0].id_user)
         const addition = balance[0].balance + checkTopup[0].nominal
+        console.log(addition)
         const setDataBalance = {
           balance: addition,
           updated: new Date()
