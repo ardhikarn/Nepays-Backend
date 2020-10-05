@@ -72,13 +72,13 @@ module.exports = {
           status: 1
         }
         patchTopupHistory(orderId, setDataStatus)
-        const balance = getBalanceUser(checkTopup.id_user)
-        const addition = balance[0].balance + checkTopup.nominal
+        const balance = getBalanceUser(checkTopup[0].id_user)
+        const addition = balance[0].balance + checkTopup[0].nominal
         const setDataBalance = {
           balance: addition,
           updated: new Date()
         }
-        patchTopup(checkTopup.id_user, setDataBalance)
+        patchTopup(checkTopup[0].id_user, setDataBalance)
         // return helper.response(response, 200, 'Topup Success')
       } else if (transactionStatus === 'deny') {
         // TODO you can ignore 'deny', because most of the time it allows payment retries
