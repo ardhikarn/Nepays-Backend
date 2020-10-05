@@ -113,6 +113,15 @@ module.exports = {
         updated: new Date()
       }
       await patchTopup(checkTopup.id_user, setDataBalance)
+      const setDataNotification = {
+        user_id: checkTopup.id_user,
+        message: 'Top up',
+        amount: checkTopup.nominal,
+        category: 2,
+        status: 0,
+        created_at: new Date()
+      }
+      await postNotification(setDataNotification)
       return helper.response(response, 200, 'Topup Success')
     } catch (error) {
       return helper.response(response, 400, 'Bad Request')
