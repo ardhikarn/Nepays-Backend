@@ -65,6 +65,7 @@ module.exports = {
           // TODO set transaction status on your databaase to 'success'
         }
       } else if (transactionStatus === 'settlement') {
+        console.log('test')
         const checkTopup = await getTopupById(orderId)
         const setDataStatus = {
           status: 1
@@ -109,7 +110,7 @@ module.exports = {
         message: 'Top up',
         amount: nominal,
         category: 2,
-        status: 0,
+        status: 1,
         created_at: new Date()
       }
       await postNotification(setDataNotification)
