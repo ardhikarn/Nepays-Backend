@@ -1,7 +1,8 @@
 const helper = require('../helper/index')
-const { getBalanceUser, postTopup, patchTopup, getTopupHistory, getTopupHistoryCount } = require('../model/payment')
+const { getBalanceUser, postTopup, patchTopup, getTopupHistory, getTopupHistoryCount, createPayment, getTopupById, patchTopupHistory } = require('../model/payment')
 const { postNotification } = require('../model/notification')
-// const connection = require('../config/mysql')
+const midtransClient = require('midtrans-client')
+const connection = require('../config/mysql')
 const qs = require('querystring')
 
 const getPrevLink = (page, currentQuery) => {
@@ -24,21 +25,103 @@ const getNextLink = (page, totalPage, currentQuery) => {
 }
 
 module.exports = {
-  // postPayment: async (request, response) => {
-  //   try {
-  // [model 1] proses save data to database: userid, nominal, created_at
-  // berhasil simpan ke table topup response : topupId, userid, nominal, created_at
-  // [model 2] update data saldo supaya saldo si user bertambah
-  // ==============================================================================
-  // [model 1] proses save data to database: userid, nominal, status, created_at
-  // berhasil simpan ke table topup response : topupId, userid, nominal, status, created_at
-  //   const { id_topup, nominal } = request.body
-  //   const topUp = await createPayment(id_topup, nominal)
-  //   return helper.response(response, 200, 'Success Create Payment', topUp)
-  // } catch (error) {
-  //   return helper.response(response, 400, 'Bad Request', error)
-  // }
-  // },
+  createPayment: async (request, response) => {
+    try {
+      const { id } = request.params
+      const { nominal } = request.body
+      const setData = {
+        id_user: id,
+        nominal,
+        status: 0,
+        date: new Date()
+      }
+      const postHistory = await postTopup(setData)
+      const topupId = postHistory.insertId
+      const topUp = await createPayment(topupId, nominal)
+      return helper.response(response, 200, 'Success Create Payment !', topUp)
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request', error)
+    }
+  },
+  midtransNotification: async (request, response) => {
+    const snap = new midtransClient.Snap({
+      isProduction: false,
+      serverKey: 'SB-Mid-server-xld1vMRItcFFCP8fqGwLHu4-',
+      clientKey: 'SB-Mid-client-rpv3D01z-aeSbOOl'
+    })
+
+    snap.transaction.notification(notificationJson).then(async (statusResponse) => {
+      const orderId = statusResponse.order_id
+      const transactionStatus = statusResponse.transaction_status
+      const fraudStatus = statusResponse.fraud_status
+
+      console.log(
+        `Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}`
+      )
+
+      if (transactionStatus == 'capture') {
+        if (fraudStatus == 'challenge') {
+          // TODO set transaction status on your databaase to 'challenge'
+        } else if (fraudStatus == 'accept') {
+          // TODO set transaction status on your databaase to 'success'
+        }
+      } else if (transactionStatus == 'settlement') {
+        // TODO set transaction status on your databaase to 'success'
+        // [model 1] proses update data status to table topup : status berhasil
+        // const updateStatusResult = await modelUpdateStatusResult(orderId, transactionStatus)
+        // response user_id, nominal topup
+        // ==================================
+        // [model 2] check nominal sebelumnya dan akan set parameter (user_id)
+        // response nominal sebelum topup
+        // ==================================
+        // saldoBaru = nominal sebelum topup + nominal topup
+        // [model 3] update data saldo supaya saldo si user bertambah (user_id, saldoBaru)
+        const checkTopup = await getTopupById(orderId)
+        const setDataStatus = {
+          status: 1
+        }
+        await patchTopupHistory(orderId, setDataStatus)
+        const balance = await getBalanceUser(checkTopup.id_user)
+        const addition = balance[0].balance + checkTopup.nominal
+        const setDataBalance = {
+          balance: addition,
+          updated: new Date()
+        }
+        await patchTopup(checkTopup.id_user, setDataBalance)
+        return helper.response(response, 200, 'Topup Success')
+      } else if (transactionStatus == 'deny') {
+        // TODO you can ignore 'deny', because most of the time it allows payment retries
+        // and later can become success
+      } else if (
+        transactionStatus == 'cancel' ||
+        transactionStatus == 'expire'
+      ) {
+        // TODO set transaction status on your databaase to 'failure'
+      } else if (transactionStatus == 'pending') {
+        // TODO set transaction status on your databaase to 'pending' / waiting payment
+      }
+    })
+  },
+  test: async (request, response) => {
+    try {
+      const { id } = request.params
+      const checkTopup = await getTopupById(id)
+      const setDataStatus = {
+        status: 1
+      }
+      await patchTopupHistory(id, setDataStatus)
+      const balance = await getBalanceUser(checkTopup.id_user)
+      const addition = balance[0].balance + checkTopup.nominal
+      const setDataBalance = {
+        balance: addition,
+        updated: new Date()
+      }
+      await patchTopup(checkTopup.id_user, setDataBalance)
+      return helper.response(response, 200, 'Topup Success')
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request')
+    }
+  },
   post_topup: async (request, response) => {
     try {
       const { id } = request.params
@@ -66,12 +149,12 @@ module.exports = {
   get_topup_history: async (request, response) => {
     let { page, id_user_login } = request.query
     page = parseInt(page)
-    let limit = 4
-    let totalData = await getTopupHistoryCount(id_user_login)
-    let totalPage = Math.ceil(totalData[0].totals / limit)
-    let offset = page * limit - limit
-    let prevLink = getPrevLink(page, request.query)
-    let nextLink = getNextLink(page, totalPage, request.query)
+    const limit = 4
+    const totalData = await getTopupHistoryCount(id_user_login)
+    const totalPage = Math.ceil(totalData[0].totals / limit)
+    const offset = page * limit - limit
+    const prevLink = getPrevLink(page, request.query)
+    const nextLink = getNextLink(page, totalPage, request.query)
     const pageInfo = {
       page,
       totalPage,
