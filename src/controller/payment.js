@@ -49,7 +49,7 @@ module.exports = {
       clientKey: 'SB-Mid-client-rpv3D01z-aeSbOOl'
     })
 
-    snap.transaction.notification(request.body).then((statusResponse) => {
+    snap.transaction.notification(request.body).then(async (statusResponse) => {
       const orderId = statusResponse.order_id
       const transactionStatus = statusResponse.transaction_status
       const fraudStatus = statusResponse.fraud_status
@@ -65,18 +65,18 @@ module.exports = {
           // TODO set transaction status on your databaase to 'success'
         }
       } else if (transactionStatus === 'settlement') {
-        const checkTopup = getTopupById(orderId)
+        const checkTopup = await getTopupById(orderId)
         const setDataStatus = {
           status: 1
         }
-        patchTopupHistory(orderId, setDataStatus)
-        const balance = getBalanceUser(checkTopup[0].id_user)
+        await patchTopupHistory(orderId, setDataStatus)
+        const balance = await getBalanceUser(checkTopup[0].id_user)
         const addition = balance[0].balance + checkTopup[0].nominal
         const setDataBalance = {
           balance: addition,
           updated: new Date()
         }
-        patchTopup(checkTopup[0].id_user, setDataBalance)
+        await patchTopup(checkTopup[0].id_user, setDataBalance)
       } else if (transactionStatus === 'deny') {
         // TODO you can ignore 'deny', because most of the time it allows payment retries
         // and later can become success
