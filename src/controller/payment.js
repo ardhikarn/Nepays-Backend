@@ -2,7 +2,6 @@ const helper = require('../helper/index')
 const { getBalanceUser, postTopup, patchTopup, getTopupHistory, getTopupHistoryCount, createPayment, getTopupById, patchTopupHistory } = require('../model/payment')
 const { postNotification } = require('../model/notification')
 const midtransClient = require('midtrans-client')
-const connection = require('../config/mysql')
 const qs = require('querystring')
 
 const getPrevLink = (page, currentQuery) => {
@@ -62,8 +61,10 @@ module.exports = {
       if (transactionStatus == 'capture') {
         if (fraudStatus == 'challenge') {
           // TODO set transaction status on your databaase to 'challenge'
+          console.log('challenge')
         } else if (fraudStatus == 'accept') {
           // TODO set transaction status on your databaase to 'success'
+          console.log('success')
         }
       } else if (transactionStatus == 'settlement') {
         const checkTopup = await getTopupById(orderId)
@@ -82,14 +83,19 @@ module.exports = {
       } else if (transactionStatus == 'deny') {
         // TODO you can ignore 'deny', because most of the time it allows payment retries
         // and later can become success
+        console.log('deny')
       } else if (
         transactionStatus == 'cancel' ||
         transactionStatus == 'expire'
       ) {
         // TODO set transaction status on your databaase to 'failure'
+        console.log('failure')
       } else if (transactionStatus == 'pending') {
         // TODO set transaction status on your databaase to 'pending' / waiting payment
+        console.log('pending')
       }
+    }).catch((error) => {
+      console.log(error)
     })
   },
   test: async (request, response) => {
