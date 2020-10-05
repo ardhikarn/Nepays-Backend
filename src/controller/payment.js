@@ -65,15 +65,12 @@ module.exports = {
           // TODO set transaction status on your databaase to 'success'
         }
       } else if (transactionStatus === 'settlement') {
-        console.log('test1')
         const checkTopup = await getTopupById(orderId)
-        console.log('test2')
         const setDataStatus = {
           status: 1
         }
-        console.log(setDataStatus)
         await patchTopupHistory(orderId, setDataStatus)
-        console.log('test3')
+        console.log(checkTopup)
         const balance = await getBalanceUser(checkTopup[0].id_user)
         console.log('test4')
         const addition = balance[0].balance + checkTopup[0].nominal
