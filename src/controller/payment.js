@@ -62,7 +62,6 @@ module.exports = {
         if (fraudStatus === 'challenge') {
           // TODO set transaction status on your databaase to 'challenge'
         } else if (fraudStatus === 'accept') {
-          console.log('yeay')
           // TODO set transaction status on your databaase to 'success'
         }
       } else if (transactionStatus === 'settlement') {
@@ -73,12 +72,10 @@ module.exports = {
         patchTopupHistory(orderId, setDataStatus)
         const balance = getBalanceUser(checkTopup[0].id_user)
         const addition = balance[0].balance + checkTopup[0].nominal
-        console.log(addition)
         const setDataBalance = {
           balance: addition,
           updated: new Date()
         }
-        console.log(setDataBalance)
         patchTopup(checkTopup[0].id_user, setDataBalance)
       } else if (transactionStatus === 'deny') {
         // TODO you can ignore 'deny', because most of the time it allows payment retries
