@@ -61,10 +61,8 @@ module.exports = {
       if (transactionStatus === 'capture') {
         if (fraudStatus === 'challenge') {
           // TODO set transaction status on your databaase to 'challenge'
-          console.log('challenge')
         } else if (fraudStatus === 'accept') {
           // TODO set transaction status on your databaase to 'success'
-          console.log('success')
         }
       } else if (transactionStatus === 'settlement') {
         const checkTopup = getTopupById(orderId)
@@ -79,56 +77,22 @@ module.exports = {
           updated: new Date()
         }
         patchTopup(checkTopup[0].id_user, setDataBalance)
-        // return helper.response(response, 200, 'Topup Success')
       } else if (transactionStatus === 'deny') {
         // TODO you can ignore 'deny', because most of the time it allows payment retries
         // and later can become success
-        console.log('deny')
       } else if (
         transactionStatus === 'cancel' ||
         transactionStatus === 'expire'
       ) {
         // TODO set transaction status on your databaase to 'failure'
-        console.log('failure')
       } else if (transactionStatus === 'pending') {
         // TODO set transaction status on your databaase to 'pending' / waiting payment
-        console.log('pending')
       }
     }).then(() => {
       return helper.response(response, 200, 'OK')
+    }).catch((error) => {
+      return helper.response(response, 200, error)
     })
-      .catch((error) => {
-        return helper.response(response, 200, error)
-      })
-  },
-  test: async (request, response) => {
-    try {
-      const { id } = request.params
-      const checkTopup = await getTopupById(id)
-      const setDataStatus = {
-        status: 1
-      }
-      await patchTopupHistory(id, setDataStatus)
-      const balance = await getBalanceUser(checkTopup.id_user)
-      const addition = balance[0].balance + checkTopup.nominal
-      const setDataBalance = {
-        balance: addition,
-        updated: new Date()
-      }
-      await patchTopup(checkTopup.id_user, setDataBalance)
-      const setDataNotification = {
-        user_id: checkTopup.id_user,
-        message: 'Top up',
-        amount: checkTopup.nominal,
-        category: 2,
-        status: 0,
-        created_at: new Date()
-      }
-      await postNotification(setDataNotification)
-      return helper.response(response, 200, 'Topup Success')
-    } catch (error) {
-      return helper.response(response, 400, 'Bad Request')
-    }
   },
   post_topup: async (request, response) => {
     try {
