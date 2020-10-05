@@ -33,15 +33,9 @@ module.exports = {
     try {
       const id = request.params.id
       const pin_new = request.body.pin_new
-      // const pin_confirm = request.body.pin_confirm
       const pin_last_input = request.body.pin_last
       const pin_last_user = await GetUserPin(id)
       const pin_check = bcrypt.compareSync(pin_last_input, pin_last_user[0].pin_code)
-      console.log(pin_check)
-      console.log(pin_new)
-      console.log(pin_last_input)
-      console.log(pin_last_user[0].pin_code)
-      console.log(id)
       const salt = bcrypt.genSaltSync(10)
       const pin_encrypt = bcrypt.hashSync(pin_new, salt)
       const setData = { pin_code: pin_encrypt }
