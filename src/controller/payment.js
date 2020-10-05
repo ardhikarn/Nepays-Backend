@@ -71,15 +71,16 @@ module.exports = {
         }
         await patchTopupHistory(orderId, setDataStatus)
         console.log(checkTopup)
-        const balance = await getBalanceUser(checkTopup[0].id_user)
+        const balance = await getBalanceUser(checkTopup.id_user)
         console.log('test4')
-        const addition = balance[0].balance + checkTopup[0].nominal
+        const addition = balance[0].balance + checkTopup.nominal
         console.log('test5')
         const setDataBalance = {
           balance: addition,
           updated: new Date()
         }
-        await patchTopup(checkTopup[0].id_user, setDataBalance)
+        await patchTopup(checkTopup.id_user, setDataBalance)
+        console.log('test6')
       } else if (transactionStatus === 'deny') {
         // TODO you can ignore 'deny', because most of the time it allows payment retries
         // and later can become success
