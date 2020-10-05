@@ -62,6 +62,7 @@ module.exports = {
         if (fraudStatus === 'challenge') {
           // TODO set transaction status on your databaase to 'challenge'
         } else if (fraudStatus === 'accept') {
+          console.log('yeay')
           // TODO set transaction status on your databaase to 'success'
         }
       } else if (transactionStatus === 'settlement') {
