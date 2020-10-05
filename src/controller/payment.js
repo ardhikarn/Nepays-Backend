@@ -50,7 +50,7 @@ module.exports = {
       clientKey: 'SB-Mid-client-rpv3D01z-aeSbOOl'
     })
 
-    snap.transaction.notification(notificationJson).then(async (statusResponse) => {
+    snap.transaction.notification(request.body).then(async (statusResponse) => {
       const orderId = statusResponse.order_id
       const transactionStatus = statusResponse.transaction_status
       const fraudStatus = statusResponse.fraud_status
@@ -66,16 +66,6 @@ module.exports = {
           // TODO set transaction status on your databaase to 'success'
         }
       } else if (transactionStatus == 'settlement') {
-        // TODO set transaction status on your databaase to 'success'
-        // [model 1] proses update data status to table topup : status berhasil
-        // const updateStatusResult = await modelUpdateStatusResult(orderId, transactionStatus)
-        // response user_id, nominal topup
-        // ==================================
-        // [model 2] check nominal sebelumnya dan akan set parameter (user_id)
-        // response nominal sebelum topup
-        // ==================================
-        // saldoBaru = nominal sebelum topup + nominal topup
-        // [model 3] update data saldo supaya saldo si user bertambah (user_id, saldoBaru)
         const checkTopup = await getTopupById(orderId)
         const setDataStatus = {
           status: 1
