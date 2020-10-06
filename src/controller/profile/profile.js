@@ -29,7 +29,7 @@ module.exports = {
         return helper.response(response, 400, 'Please enter your first and last name')
       } else {
         await patchPersonal(id_user_login, setData)
-        return helper.response(response, 400, 'Update profile success', setData)
+        return helper.response(response, 200, 'Update profile success', setData)
       }
     } catch (error) {
       return helper.response(response, 400, 'Bad request', error)
