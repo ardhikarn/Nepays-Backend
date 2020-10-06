@@ -9,12 +9,12 @@ module.exports = {
       const id_user_login = request.params.id
       const result = await getUserFullById(id_user_login)
       if (result.length > 0) {
-        return helper.response(response, 200, 'Get Personal success', result)
+        return helper.response(response, 200, 'Get profile success', result)
       } else {
-        return helper.response(response, 404, 'Please Login')
+        return helper.response(response, 404, 'Please login first')
       }
     } catch (error) {
-      return helper.response(response, 400, 'Bad request', error)
+      return helper.response(response, 400, 'Bad Request', error)
     }
   },
   patch_personal_name: async (request, response) => {
@@ -26,10 +26,10 @@ module.exports = {
         last_name: last_name
       }
       if (first_name === '' || last_name === '' || first_name === null || last_name === null) {
-        return helper.response(response, 200, 'Name cannot be null')
+        return helper.response(response, 200, 'Please enter your first and last name')
       } else {
         await patchPersonal(id_user_login, setData)
-        return helper.response(response, 200, 'Patch Personal success', setData)
+        return helper.response(response, 200, 'Update profile success', setData)
       }
     } catch (error) {
       return helper.response(response, 400, 'Bad request', error)
@@ -44,12 +44,12 @@ module.exports = {
       }
       const checkPhone = await getPhone(phone)
       if (checkPhone.length > 0) {
-        return helper.response(response, 400, 'Phone already registered')
+        return helper.response(response, 400, 'Phone number is already registered')
       } else if (phone === '' || phone === null) {
-        return helper.response(response, 400, 'Phone require')
+        return helper.response(response, 400, 'Please enter your phone number')
       } else {
         const result = await patchPersonal(id_user_login, setData)
-        return helper.response(response, 200, 'Patch Personal Success', result)
+        return helper.response(response, 200, 'Update profile success', result)
       }
     } catch (error) {
       return helper.response(response, 400, 'Bad request', error)
@@ -73,7 +73,7 @@ module.exports = {
         image: image
       }
       const edit_image = await patchProfileImage(id_user_login, setData)
-      return helper.response(response, 200, 'Update Image success')
+      return helper.response(response, 200, 'Update profile image success')
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)
     }

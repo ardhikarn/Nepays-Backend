@@ -14,22 +14,20 @@ module.exports = {
       const setData = { pin_code: pin_encrypt }
 
       if (pin === pin_confirm) {
-        if (pin_confirm.length < 6) {
-          return helper.response(response, 400, 'Pin must be up to 6 number')
-        } else if (pin_confirm.length > 6) {
-          return helper.response(response, 400, 'Max Pin 6 number')
+        if (pin_confirm.length < 6 || pin_confirm.length > 6) {
+          return helper.response(response, 400, 'Pin must be 6 digit number')
         } else {
           await patchNewPin(setData, id)
-          return helper.response(response, 200, 'Create new pin success')
+          return helper.response(response, 200, 'Add new pin success')
         }
       } else {
-        return helper.response(response, 200, "Pin doesn't match", pin)
+        return helper.response(response, 200, "Pin didn't match", pin)
       }
     } catch (error) {
       return helper.response(response, 400, 'Bad request', error)
     }
   },
-  patch_edit_pin: async (request, response) => { // Edit pin
+  patch_edit_pin: async (request, response) => {
     try {
       const id = request.params.id
       const pin_new = request.body.pin_new
@@ -40,16 +38,14 @@ module.exports = {
       const pin_encrypt = bcrypt.hashSync(pin_new, salt)
       const setData = { pin_code: pin_encrypt }
       if (pin_check === true) {
-        if (pin_new.length < 6) {
-          return helper.response(response, 400, 'Pin must be up to 6 number')
-        } else if (pin_new.length > 6) {
-          return helper.response(response, 400, 'Max Pin 6 number')
+        if (pin_new.length < 6 || pin_new.length > 6) {
+          return helper.response(response, 400, 'Pin must be 6 digit number')
         } else {
           await patchNewPin(setData, id)
-          return helper.response(response, 200, 'Edit new pin success')
+          return helper.response(response, 200, 'Change pin success')
         }
       } else {
-        return helper.response(response, 400, 'Wrong Pin !')
+        return helper.response(response, 400, 'Wrong pin')
       }
     } catch (error) {
       return helper.response(response, 400, 'Bad Request')

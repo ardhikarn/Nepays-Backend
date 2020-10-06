@@ -24,10 +24,10 @@ module.exports = {
             return helper.response(response, 200, 'Update password success')
           }
         } else {
-          return helper.response(response, 400, "Password doesn't match")
+          return helper.response(response, 400, "Password didn't match")
         }
       } else {
-        return helper.response(response, 400, 'Wrong Password !')
+        return helper.response(response, 400, 'Wrong password')
       }
     } catch (error) {
       return helper.response(response, 400, 'Bad Request')
