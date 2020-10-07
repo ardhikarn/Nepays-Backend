@@ -28,12 +28,20 @@
 Open .env file on your favorite code editor, and copy paste this code below :
 
 ```
-DB_HOST=localhost // Database Host
-DB_USER=root // Database Root
-DB_PASS=// Database Password
-DB_NAME= // Database Name
+DB_HOST=localhost
+DB_PASS=
+DB_USER=root
+DB_NAME=nepays
 
-PORT=3001 //PORT
-IP=127.0.0.1 // IP
+IP=127.0.0.1
+PORT=3009
+URL=http://localhost:8080
+
+USER=nepaysid@gmail.com
+PASS=1q0p2w9o
+
+KEY=ITSASECRET
 ```
+## Postman Documentation
+https://universal-star-769522.postman.co/collections/12330794-62edefd4-7dc3-485f-92a5-a0dedf48caa9?version=latest&workspace=1461c9ef-c50c-4ba8-8919-f3d30685cc6d
 
