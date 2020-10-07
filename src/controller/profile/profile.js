@@ -1,9 +1,8 @@
-const { getUserById, getUserFullById, patchPersonal, getPhone, getImage, patchProfileImage } = require('../../model/profile')
+const {getUserFullById, patchPersonal, getPhone, getImage, patchProfileImage } = require('../../model/profile')
 const helper = require('../../helper/index')
 const fs = require('fs')
 
 module.exports = {
-
   get_personal: async (request, response) => {
     try {
       const id_user_login = request.params.id
@@ -77,6 +76,29 @@ module.exports = {
     } catch (error) {
       return helper.response(response, 400, 'Bad Request', error)
     }
+  },
+  deleteImage: async (request, response) => {
+    try {
+      const { id } = request.params
+      const checkUser = await getUserFullById(id)
+      if (checkUser[0].image === 'blank-user.png') {
+        return helper.response(response, 400, 'Your image is already blank')
+      } else {
+        fs.unlink(`./uploads/${checkUser[0].image}`, async (error) => {
+          if (error) {
+            throw error
+          } else {
+            const setData = {
+              image: 'blank-user.png',
+              updated: new Date()
+            }
+            await patchProfileImage(id, setData)
+            return helper.response(response, 200, 'Delete profile image success')
+          }
+        })
+      }
+    } catch (error) {
+      return helper.response(response, 400, 'Bad Request', error)
+    }
   }
-
 }
