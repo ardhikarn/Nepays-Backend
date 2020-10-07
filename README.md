@@ -18,10 +18,10 @@
 2. Type `npm install`
 3. Make new file a called **.env**, set up first [here](#set-up-env-file)
 4. Turn on Web Server and MySQL can using Third-party tool like xampp, etc.
-5. Create a database with the name #nama_database, and Import file sql to **phpmyadmin**
+5. Create a database with the name nepays, and Import file sql to **phpmyadmin**
 6. Open Postman desktop application or Chrome web app extension that has installed before
-7. Choose HTTP Method and enter request url.(ex. localhost:3001/)
-8. You can see all the end point [here](#end-point)
+7. Choose HTTP Method and enter request url.(ex. http://127.0.0.1:3009/)
+8. You can see all the end point [here](#postman-documentation)
 
 ## Set up .env file
 
@@ -35,13 +35,12 @@ DB_NAME=nepays
 
 IP=127.0.0.1
 PORT=3009
-URL=http://localhost:8080
+URL=http://localhost:8080 //URL to your local website
 
-USER=nepaysid@gmail.com
-PASS=1q0p2w9o
+USER= //Input your email here
+PASS= //Input your email's password here
 
 KEY=ITSASECRET
 ```
 ## Postman Documentation
-https://universal-star-769522.postman.co/collections/12330794-62edefd4-7dc3-485f-92a5-a0dedf48caa9?version=latest&workspace=1461c9ef-c50c-4ba8-8919-f3d30685cc6d
-
+https://documenter.getpostman.com/view/12330794/TVRhcpjZ

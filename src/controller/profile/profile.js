@@ -1,4 +1,4 @@
-const {getUserFullById, patchPersonal, getPhone, getImage, patchProfileImage } = require('../../model/profile')
+const { getUserFullById, patchPersonal, getPhone, getImage, patchProfileImage } = require('../../model/profile')
 const helper = require('../../helper/index')
 const fs = require('fs')
 
